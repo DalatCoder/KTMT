@@ -1,6 +1,9 @@
 .MODEL SMALL
 .STACK
 .DATA
+
+    GOODBYE DB 10,13, 'Bam phim bat ki de tiep tuc...$'
+    
     ; Bai 1
     MSG1 DB 'Hello World!$'
     MSG2 DB 10,13, 'Hello, solar system!$'
@@ -9,7 +12,12 @@
     ; Bai 2
     PROMPT1 DB 'Hay nhap mot ky tu: $'
     CHAR DB ?
-    RESULT_MSG1 DB 10,13, 'Ky tu da nhap: $'
+    RESULT_MSG1 DB 10,13, 'Ky tu da nhap: $' 
+    
+    ; Bai 3
+    RESULT_MSG2 DB 10,13, 'Ky tu dung truoc: $'
+    RESULT_MSG3 DB 10,13, 'Ky tu dung sau: $'
+    
     
 .CODE
 
@@ -38,27 +46,84 @@ mov ds, ax
 
 ; ===============================
 ; BAI 2
-  mov ah, 9
-  lea dx, PROMPT1
-  int 21h
+;  mov ah, 9
+;  lea dx, PROMPT1
+;  int 21h
   
   ; Read character from standard input, result is stored in AL
-  mov ah, 1
-  int 21h
+;  mov ah, 1
+;  int 21h
   
   ; Luu gia tri vua nhap vao CHAR
-  mov CHAR, al
+;  mov CHAR, al
   
-  mov ah, 9
-  lea dx, RESULT_MSG1
-  int 21h
+;  mov ah, 9
+;  lea dx, RESULT_MSG1
+;  int 21h
   
   ; Write character to standard output
-  mov ah, 6
-  mov dl, CHAR
-  int 21h
+;  mov ah, 6
+;  mov dl, CHAR
+;  int 21h
                                                                    
 ; ===============================
+
+; ===============================
+; BAI 3
+
+    mov ah, 9
+    lea dx, PROMPT1
+    int 21h
+    
+    ; Read character from standard input
+    mov ah, 1
+    int 21h
+    
+    ; Luu gia tri vua nhap vao CHAR
+    mov CHAR, al
+    
+    ; Xuat thong bao ky tu dung truoc
+    mov ah, 9
+    lea dx, RESULT_MSG2
+    int 21h
+    
+    ; Gan CHAR vao al
+    mov al, CHAR
+    
+    ; Giam gia tri tai al de lay ky tu phia truoc
+    dec al
+    
+    ; Write character to standard output
+    mov ah, 6
+    mov dl, al
+    int 21h
+    
+    ; Xuat thong bao ky tu dung sau
+    mov ah, 9
+    lea dx, RESULT_MSG3
+    int 21h
+    
+    ; Gan CHAR vao al
+    mov al, CHAR
+    
+    ; Tang gia tri tai al de lay ky tu phia sau
+    inc al
+    
+    ; Xuat ky tu ra man hinh
+    mov ah, 6
+    mov dl, al
+    int 21h
+
+; ===============================
+
+; Xuat thong bao ket thuc chuong trinh
+mov ah, 9
+lea dx, GOODBYE
+int 21h
+
+; Dung chuong trinh xem ket qua
+mov ah, 1
+int 21h
 
 ; Tra quyen dieu hanh cho DOS
 mov ah, 4ch                              
