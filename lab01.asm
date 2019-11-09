@@ -20,7 +20,14 @@
     
     ; Bai 4
     RESULT_MSG4 DB ', da nhap: $'
-    RESULT_MSG5 DB ', dung sau: $'    
+    RESULT_MSG5 DB ', dung sau: $' 
+    
+    ; Bai 5
+    PROMPT2 DB 'Nhap ky tu thu nhat: $'
+    PROMPT3 DB 10,13, 'Nhap ky tu thu hai: $'
+    RESULT_MSG6 DB 10,13, 'Ky tu tong: $'
+    CHAR1 DB ?
+    CHAR2 DB ?
     
 .CODE
 
@@ -122,54 +129,93 @@ mov ds, ax
 ; ===============================
 ; BAI 4
     ; Xuat thong bao yeu cau nhap ki tu
-    mov ah, 9
-    lea dx, PROMPT1
-    int 21h
+;    mov ah, 9
+;    lea dx, PROMPT1
+;    int 21h
     
     ; Nhap ki tu tu ban phim
-    mov ah, 1
-    int 21h
+;    mov ah, 1
+;    int 21h
     
     ; Gan ki tu vua nhap vao CHAR
-    mov CHAR, al
+;    mov CHAR, al
     
     ; Xuat thong bao ky tu dung truoc
-    mov ah, 9
-    lea dx, RESULT_MSG2
-    int 21h
+;    mov ah, 9
+;    lea dx, RESULT_MSG2
+;    int 21h
     
     ; Xuat ki tu dung truoc
-    mov al, CHAR
-    dec al
+;    mov al, CHAR
+;    dec al
     
-    mov ah, 2
-    mov dl, al
-    int 21h
+;    mov ah, 2
+;    mov dl, al
+;    int 21h
     
     ; Xuat thong bao ki tu da nhap
-    mov ah, 9
-    lea dx, RESULT_MSG4
-    int 21h
+;    mov ah, 9
+;    lea dx, RESULT_MSG4
+;    int 21h
     
     ; Xuat ki tu da nhap
-    mov ah, 2
-    mov dl, CHAR
-    int 21h
+;    mov ah, 2
+;    mov dl, CHAR
+;    int 21h
     
     ; Xuat thong bao ki tu dung sau
-    mov ah, 9
-    lea dx, RESULT_MSG5
-    int 21h
+;    mov ah, 9
+;    lea dx, RESULT_MSG5
+;    int 21h
     
     ; Xuat ki tu dung sau
-    mov al, CHAR
-    inc al
+;    mov al, CHAR
+;    inc al
     
+;    mov ah, 2
+;    mov dl, al
+;    int 21h
+    
+
+; ===============================
+
+; ===============================
+; BAI 5
+    ; Xuat thong bao yeu cau nhap ki tu thu nhat
+    mov ah, 9
+    lea dx, PROMPT2
+    int 21h
+    
+    ; Nhap ki tu thu nhat
+    mov ah, 1
+    int 21h
+    mov CHAR1, al
+    
+    ; Xuat thong bao yeu cau nhap ki tu thu hai
+    mov ah, 9
+    lea dx, PROMPT3
+    int 21h
+    
+    ; Nhap ki tu thu hai
+    mov ah, 1
+    int 21h
+    mov CHAR2, al
+    
+    ; Xuat thong bao tong
+    mov ah, 9
+    lea dx, RESULT_MSG6
+    int 21h
+    
+    ; Tinh tong
+    mov al, CHAR1
+    add al, CHAR2
+    
+    ; Xuat tong ra man hinh
     mov ah, 2
     mov dl, al
     int 21h
     
-
+    
 ; ===============================
 
 ; Xuat thong bao ket thuc chuong trinh
