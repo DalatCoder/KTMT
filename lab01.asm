@@ -16,8 +16,11 @@
     
     ; Bai 3
     RESULT_MSG2 DB 10,13, 'Ky tu dung truoc: $'
-    RESULT_MSG3 DB 10,13, 'Ky tu dung sau: $'
+    RESULT_MSG3 DB 10,13, 'Ky tu dung sau: $' 
     
+    ; Bai 4
+    RESULT_MSG4 DB ', da nhap: $'
+    RESULT_MSG5 DB ', dung sau: $'    
     
 .CODE
 
@@ -71,15 +74,63 @@ mov ds, ax
 ; ===============================
 ; BAI 3
 
+;    mov ah, 9
+;    lea dx, PROMPT1
+;    int 21h
+    
+    ; Read character from standard input
+;    mov ah, 1
+;    int 21h
+    
+    ; Luu gia tri vua nhap vao CHAR
+;    mov CHAR, al
+    
+    ; Xuat thong bao ky tu dung truoc
+;    mov ah, 9
+;    lea dx, RESULT_MSG2
+;    int 21h
+    
+    ; Gan CHAR vao al
+;    mov al, CHAR
+    
+    ; Giam gia tri tai al de lay ky tu phia truoc
+;    dec al
+    
+    ; Write character to standard output
+;    mov ah, 6
+;    mov dl, al
+;    int 21h
+    
+    ; Xuat thong bao ky tu dung sau
+;    mov ah, 9
+;    lea dx, RESULT_MSG3
+;    int 21h
+    
+    ; Gan CHAR vao al
+;    mov al, CHAR
+    
+    ; Tang gia tri tai al de lay ky tu phia sau
+;    inc al
+    
+    ; Xuat ky tu ra man hinh
+;    mov ah, 6
+;    mov dl, al
+;    int 21h
+
+; ===============================
+
+; ===============================
+; BAI 4
+    ; Xuat thong bao yeu cau nhap ki tu
     mov ah, 9
     lea dx, PROMPT1
     int 21h
     
-    ; Read character from standard input
+    ; Nhap ki tu tu ban phim
     mov ah, 1
     int 21h
     
-    ; Luu gia tri vua nhap vao CHAR
+    ; Gan ki tu vua nhap vao CHAR
     mov CHAR, al
     
     ; Xuat thong bao ky tu dung truoc
@@ -87,32 +138,37 @@ mov ds, ax
     lea dx, RESULT_MSG2
     int 21h
     
-    ; Gan CHAR vao al
+    ; Xuat ki tu dung truoc
     mov al, CHAR
-    
-    ; Giam gia tri tai al de lay ky tu phia truoc
     dec al
     
-    ; Write character to standard output
-    mov ah, 6
+    mov ah, 2
     mov dl, al
     int 21h
     
-    ; Xuat thong bao ky tu dung sau
+    ; Xuat thong bao ki tu da nhap
     mov ah, 9
-    lea dx, RESULT_MSG3
+    lea dx, RESULT_MSG4
     int 21h
     
-    ; Gan CHAR vao al
-    mov al, CHAR
+    ; Xuat ki tu da nhap
+    mov ah, 2
+    mov dl, CHAR
+    int 21h
     
-    ; Tang gia tri tai al de lay ky tu phia sau
+    ; Xuat thong bao ki tu dung sau
+    mov ah, 9
+    lea dx, RESULT_MSG5
+    int 21h
+    
+    ; Xuat ki tu dung sau
+    mov al, CHAR
     inc al
     
-    ; Xuat ky tu ra man hinh
-    mov ah, 6
+    mov ah, 2
     mov dl, al
     int 21h
+    
 
 ; ===============================
 
