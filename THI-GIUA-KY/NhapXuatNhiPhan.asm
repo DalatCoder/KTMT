@@ -23,19 +23,17 @@
         XOR BX, BX
         XOR CX, CX
         
+        ; Xuat thong bao nhap day nhi phan
         MOV AH, 9
         LEA DX, MSG2
         INT 21h
     
     INPUT:
-        ; Xuat thong bao nhap ki tu
-        
-        
         ; Nhap 1 ki tu
         MOV AH, 7
         INT 21h
         
-        ; Kiem tra ENTER => Thoat chuong trinh
+        ; Kiem tra ENTER => Hien thi day nhi phan
         CMP AL, 0Dh
         JE BREAK
         
