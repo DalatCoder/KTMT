@@ -1,19 +1,12 @@
 .MODEL SMALL
 .STACK 100h
 .DATA
-
     MSG1 DB 10,13, 'Nhap vao 1 so thap phan: $'
     MSG2 DB 10,13, 'So thap phan vua nhap la: $'
- 
-    END1 DB 10,13, 'Bam phim bat ki de thoat chuong trinh...$'
-    
-    KYTU DW ? ; => Luu ky tu so vua nhap
-
+       
 .CODE
-    ; LAY DU LIEU TU DATA VAO DS
     MOV AX, @DATA
     MOV DS, AX    
-    ; =========================================
     
     NHAP_10:
         LEA DX, MSG1
@@ -30,14 +23,13 @@
     MOV AX, BX
     CALL XUAT_THAP_PHAN        
             
-    ; ================================================
-    ; DUNG MAN HINH, XEM KET QUA
-    CALL THOAT_CHUONG_TRINH
+    MOV AH, 4Ch
+    INT 21h
     
 
-    ; ================================================
+    ; ====================================
     ; KHAI BAO THU TUC
-    ; ================================================
+    ; ====================================
     
     XUAT_CHUOI PROC
         PUSH AX
@@ -94,7 +86,7 @@
             POP AX
         RET
     NHAP_THAP_PHAN ENDP
-    
+
     XUAT_THAP_PHAN PROC
         PUSH AX
         PUSH BX
@@ -126,18 +118,4 @@
         POP AX
         RET
     XUAT_THAP_PHAN ENDP
-    
-    THOAT_CHUONG_TRINH PROC
-        MOV AH, 9
-        LEA DX, END1
-        INT 21h
-        
-        MOV AH, 7
-        INT 21h
-        
-        ; THOAT CHUONG TRINH
-        MOV AH, 4Ch
-        INT 21h
-        RET
-    THOAT_CHUONG_TRINH ENDP
 END
