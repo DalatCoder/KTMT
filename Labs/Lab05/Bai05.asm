@@ -1,14 +1,9 @@
-; =========================================
-; NGUYEN TRONG HIEU - 1812756 - CTK42   
-; =========================================
-
 .MODEL SMALL
 .STACK 100h
 .DATA
 
     MSG1 DB 10,13, 'Nhap vao 1 so thap phan: $'
     MSG2 DB 10,13, 'So thap phan vua nhap la: $'
-    ERR1 DB 10,13, 'Nhap sai! Nhap lai toan bo di, ahihi$'
  
     END1 DB 10,13, 'Bam phim bat ki de thoat chuong trinh...$'
     
@@ -20,91 +15,129 @@
     MOV DS, AX    
     ; =========================================
     
-    RESET:         
-        ; Hien thi thong bao nhap 1 so thap phan
-        MOV AH, 9
+    NHAP_10:
         LEA DX, MSG1
+        CALL XUAT_CHUOI
+        
+        CALL NHAP_THAP_PHAN
+        
+        CMP DX, 0
+        JE NHAP_10
+        
+    LEA DX, MSG2
+    CALL XUAT_CHUOI
+    
+    MOV AX, BX
+    CALL XUAT_THAP_PHAN        
+            
+    ; ================================================
+    ; DUNG MAN HINH, XEM KET QUA
+    CALL THOAT_CHUONG_TRINH
+    
+
+    ; ================================================
+    ; KHAI BAO THU TUC
+    ; ================================================
+    
+    XUAT_CHUOI PROC
+        PUSH AX
+        
+        MOV AH, 9
         INT 21h
         
-        ; Khoi tao gia tri
+        POP AX
+        RET
+    XUAT_CHUOI ENDP
+    
+    NHAP_THAP_PHAN PROC
+        PUSH AX
+        PUSH CX
+        PUSH SI
+        
         XOR BX, BX
         
-    INPUT:
-        MOV AH, 1
-        INT 21h
-        
-        CMP AL, 0Dh
-        JE BREAK
-        
-        CMP AL, '0'
-        JB XULY_LOI
-        CMP AL, '9'
-        JA XULY_LOI
-        
-        JMP XULY_OK ; Nguoi dung nhap dung
-        
-        XULY_LOI:
-            MOV AH, 9
-            LEA DX, ERR1
+        INPUT:
+            MOV AH, 1
             INT 21h
             
-            JMP RESET
+            CMP AL, 0Dh
+            JE BREAK
             
-        XULY_OK:
+            CMP AL, '0'
+            JB XULY_LOI
+            CMP AL, '9'
+            JA XULY_LOI
+            
             AND AL, 0Fh
-            XOR AH, AH
-            MOV KYTU, AX ; Luu ky tu so vua nhap vao KYTU
+            MOV CL, AL
+            XOR CH, CH
             
-            MOV AX, BX ; Tong = Tong * 10
-            MOV CX, 10
-            MUL CX ; AX = AX * 10            
-            
-            ADD AX, KYTU ; AX = AX + KYTU
-            
+            MOV AX, BX
+            MOV SI, 10
+            MUL SI
             MOV BX, AX
+            ADD BX, CX
             
             JMP INPUT
-    
-    BREAK:
-        ; Xuat thong bao ket qua
-        MOV AH, 9
-        LEA DX, MSG2
-        INT 21h
-    
-    XOR CX, CX    
-    MOV AX, BX ; Thuc hien phep chia DIV, AX = AX / 10
-    MOV BX, 10
-    
-    XULY_STACK:
-        XOR DX, DX ; Xoa phan du (remainder) hien tai
-        DIV BX
-        PUSH DX
-        INC CX     ; Dem so phan tu da PUSH vao stack 
-        
-        CMP AX, 0  ; Thuong lon hon 0 thi tiep tuc chia
-        JA XULY_STACK
-    
-    PRINT:
-        POP DX
-        OR DX, 30h
-        MOV AH, 2
-        INT 21h
-        LOOP PRINT
-    
-    
-    
             
-    ; =========================================
-    ; DUNG MAN HINH, XEM KET QUA
-    MOV AH, 9
-    LEA DX, END1
-    INT 21h
+            XULY_LOI:
+                XOR BX, BX
+                MOV DX, 0
+                JMP EXIT
+        
+        BREAK:
+            MOV DX, 1
+        
+        EXIT:
+            POP SI
+            POP CX
+            POP AX
+        RET
+    NHAP_THAP_PHAN ENDP
     
-    MOV AH, 7
-    INT 21h
+    XUAT_THAP_PHAN PROC
+        PUSH AX
+        PUSH BX
+        PUSH CX
+        PUSH DX
+        
+        MOV BX, 10
+        XOR CX, CX
+        
+        XULY_STACK:
+            XOR DX, DX
+            DIV BX
+            PUSH DX
+            INC CX
+            
+            CMP AX, 0
+            JA XULY_STACK
+            
+        PRINT:
+            POP DX
+            OR DX, 30h
+            MOV AH, 2
+            INT 21h
+        LOOP PRINT
+        
+        POP DX
+        POP CX
+        POP BX
+        POP AX
+        RET
+    XUAT_THAP_PHAN ENDP
     
-    ; THOAT CHUONG TRINH
-    MOV AH, 4Ch
-    INT 21h
-    
+    THOAT_CHUONG_TRINH PROC
+        MOV AH, 9
+        LEA DX, END1
+        INT 21h
+        
+        MOV AH, 7
+        INT 21h
+        
+        ; THOAT CHUONG TRINH
+        MOV AH, 4Ch
+        INT 21h
+        RET
+    THOAT_CHUONG_TRINH ENDP
 END
