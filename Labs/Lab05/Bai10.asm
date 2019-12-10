@@ -1,156 +1,120 @@
 .MODEL SMALL
 .STACK 100h
 .DATA
-    END1 DB 10,13,10, 'Bam 1 phim bat ki de thoat chuong trinh ...$'
-
-    MSG1 DB 10,13, 'CHUONG TRINH TINH CHU VI VA DIEN TICH HINH CHU NHAT$'
-    MSG2 DB 10,13, 'Nhap vao chieu dai >> $'    
-    MSG3 DB 10,13, 'Nhap vao chieu rong >> $'
-    RES1 DB 10,13, 'Chu vi hinh chu nhat la: $'
-    RES2 DB 10,13, 'Dien tich hinh chu nhat la: $'
+    MSG1 DB 10,13, 'Nhap chieu dai: $'
+    MSG2 DB 10,13, 'Nhap chieu rong: $'
+    MSG3 DB 10,13, 'Dien tich: $'
+    MSG4 DB 10,13, 'Chu vi: $'
     
-    CHIEUDAI DB ?
-    CHIEURONG DB ?
-    CHUVI DW ?
-    DIENTICH DW ?
-    
+    DAI DW ?
+    RONG DW ?
 .CODE
-    ; KHOI TAO CHUONG TRINH
-    CALL KHOI_TAO_CHUONG_TRINH
+    MOV AX, @DATA
+    MOV DS, AX
     
-    ; Xuat thong bao ten chuong trinh
-    MOV DX, OFFSET MSG1
+    ; Nhap chieu dai
+    NHAP_DAI:
+        LEA DX, MSG1
+        CALL XUAT_CHUOI
+        
+        CALL NHAP_THAP_PHAN
+        CMP DX, 0
+        JE NHAP_DAI
+    
+    MOV DAI, BX
+    
+    ; Nhap chieu rong
+    NHAP_RONG:
+        LEA DX, MSG2
+        CALL XUAT_CHUOI
+        
+        CALL NHAP_THAP_PHAN
+        CMP DX, 0
+        JE NHAP_RONG
+        
+    MOV RONG, BX
+    
+    ; Gan gia tri vao BX, CX
+    MOV BX, DAI
+    MOV CX, RONG
+    
+    ; Xuat dien tich
+    LEA DX, MSG3
     CALL XUAT_CHUOI
     
-    ; Xuat thong bao nhap chieu dai
-    MOV DX, OFFSET MSG2
-    CALL XUAT_CHUOI
-    
-    CALL NHAP_SO
-    MOV CHIEUDAI, BL
-    
-    ; Xuat thong bao nhap chieu rong
-    MOV DX, OFFSET MSG3
-    CALL XUAT_CHUOI
-    
-    CALL NHAP_SO
-    MOV CHIEURONG, BL
-    
-    ; Xuat thong bao tinh chu vi HCN
-    MOV DX, OFFSET RES1
-    CALL XUAT_CHUOI
-    
-    MOV BH, CHIEUDAI
-    MOV BL, CHIEURONG
-    CALL TINH_CHU_VI
-    MOV CHUVI, AX
-    
-    ; Xuat gia tri chu vi
-    MOV AX, CHUVI
-    CALL XUAT_THAP_PHAN
-    
-    ; Xuat thong bao tinh dien tich HCN
-    MOV DX, OFFSET RES2
-    CALL XUAT_CHUOI
-    
-    MOV BH, CHIEUDAI
-    MOV BL, CHIEURONG
     CALL TINH_DIEN_TICH
-    MOV DIENTICH, AX
-    
-    ; Xuat gia tri dien tich
-    MOV AX, DIENTICH
     CALL XUAT_THAP_PHAN
-                           
-    ; Thoat chuong trinh
-    CALL THOAT_CHUONG_TRINH
-               
     
-              
-               
-    ; ===========================================================
-    ; PHAN KHAI BAO THU TUC
-    ; ===========================================================
+    ; Xuat chu vi
+    LEA DX, MSG4
+    CALL XUAT_CHUOI
     
-    ; THU TUC HAM XUAT 1 CHUOI RA MAN HINH
-    ; Input: 
-    ;       - DS: Dia chi cua chuoi can xuat
-    ; Output: khong
+    CALL TINH_CHU_VI
+    CALL XUAT_THAP_PHAN
+    
+    MOV AH, 4Ch
+    INT 21h
+
+    ; Khai bao thu tuc
     XUAT_CHUOI PROC
         MOV AH, 9
         INT 21h
         RET
     XUAT_CHUOI ENDP
     
-    ; THU TUC KHOI TAO CHUONG TRINH
-    KHOI_TAO_CHUONG_TRINH PROC
-        MOV AX, @DATA
-        MOV DS, AX
+    NHAP_THAP_PHAN PROC
+        PUSH AX
+        PUSH CX
+        PUSH SI
         
-        XOR AX, AX
         XOR BX, BX
-        XOR CX, CX
-        XOR DX, DX
-        RET
-    KHOI_TAO_CHUONG_TRINH ENDP
-    
-    ; THU TUC NHAP 1 SO TU BAN PHIM
-    ; Input: khong
-    ; Output:
-    ;       - BL: so nhap tu ban phim
-    NHAP_SO PROC
-        INPUT1:
+        
+        INPUT:
             MOV AH, 1
             INT 21h
             
-            CMP AL, '0'
-            JB INPUT1
+            CMP AL, 0Dh
+            JE BREAK
             
+            CMP AL, '0'
+            JB XULY_LOI
             CMP AL, '9'
-            JA INPUT1
+            JA XULY_LOI
             
             AND AL, 0Fh
-            MOV BL, AL
+            MOV CL, AL
+            XOR CH, CH
+            
+            MOV AX, BX
+            MOV SI, 10
+            MUL SI
+            MOV BX, AX
+            ADD BX, CX
+            
+            JMP INPUT
+            
+            XULY_LOI:
+                XOR BX, BX
+                MOV DX, 0
+                JMP EXIT
+        
+        BREAK:
+            MOV DX, 1
+        
+        EXIT:
+            POP SI
+            POP CX
+            POP AX
         RET
-    NHAP_SO ENDP
+    NHAP_THAP_PHAN ENDP
+
     
-    ; THU TUC TINH CHU VI
-    ; Input:
-    ;       - BH: Chieu dai hinh chu nhat
-    ;       - BL: Chieu rong hinh chu nhat
-    ; Output:
-    ;       - AX: CHU VI HINH CHU NHAT
-    TINH_CHU_VI PROC
-        PUSH BX
-        
-        ADD BH, BL
-        MOV AL, 2
-        MUL BH
-        
-        POP BX
-        RET
-    TINH_CHU_VI ENDP
-    
-    ; THU TUC TINH DIEN TICH
-    ; Input:
-    ;       - BH: Chieu dai hinh chu nhat
-    ;       - BL: Chieu rong hinh chu nhat
-    ; Output:
-    ;       - AX: DIEN TICH HINH CHU NHAT
-    TINH_DIEN_TICH PROC
-        PUSH BX
-        
-        MOV AL, BH
-        MUL BL
-        
-        POP BX
-        RET
-    TINH_DIEN_TICH ENDP
-    
-    ; THU TUC XUAT 1 SO THAP PHAN
-    ; Input:
-    ;       - AX: So thap phan can xuat
     XUAT_THAP_PHAN PROC
+        PUSH AX
+        PUSH BX
+        PUSH CX
+        PUSH DX
+        
         MOV BX, 10
         XOR CX, CX
         
@@ -168,22 +132,39 @@
             OR DX, 30h
             MOV AH, 2
             INT 21h
-            LOOP PRINT            
+        LOOP PRINT
+        
+        POP DX
+        POP CX
+        POP BX
+        POP AX
         RET
     XUAT_THAP_PHAN ENDP
 
-    
-    ; THU TUC DUNG VA THOAT CHUONG TRINH
-    THOAT_CHUONG_TRINH PROC
-        MOV AH, 9
-        LEA DX, END1
-        INT 21h
-        
-        MOV AH, 7
-        INT 21h
-        
-        MOV AH, 4Ch
-        INT 21h
+    ; Input:
+    ;   - BX: Chieu dai
+    ;   - CX: Chieu rong
+    ; Output:
+    ;   - AX: Dien tich    
+    TINH_DIEN_TICH PROC
+        MOV AX, BX
+        MUL CX
         RET
-    THOAT_CHUONG_TRINH ENDP
+    TINH_DIEN_TICH ENDP
+
+    ; Input:
+    ;   - BX: Chieu dai
+    ;   - CX: Chieu rong
+    ; Output:
+    ;   - AX: Chu vi
+    TINH_CHU_VI PROC
+        PUSH BX
+        
+        ADD BX, CX
+        MOV AX, 2
+        MUL BX
+        
+        POP BX
+        RET
+    TINH_CHU_VI ENDP
 END
