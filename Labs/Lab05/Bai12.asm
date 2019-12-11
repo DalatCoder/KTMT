@@ -53,8 +53,22 @@
     
     MOV AX, NUM1
     MOV BX, NUM2
-    SUB AX, BX    
-    CALL XUAT_THAP_PHAN
+    SUB AX, BX
+    MOV CX, AX    
+    
+    JS XUAT_AM
+    JMP XUAT_KQ
+    
+    XUAT_AM:
+        MOV AH, 2
+        MOV DL, '-'
+        INT 21h
+        
+        NEG CX
+        MOV AX, CX
+    
+    XUAT_KQ:
+        CALL XUAT_THAP_PHAN
     
     ; Xuat tich
     MOV DX, OFFSET RES3
